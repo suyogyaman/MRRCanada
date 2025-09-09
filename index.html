@@ -46,7 +46,7 @@
     const ctx = canvas.getContext("2d");
 
     const frame = new Image();
-    frame.src = "frame.png"; // Ensure this file is in the same folder as index.html
+    frame.src = "frame.png"; // Make sure this file exists in the same folder
 
     upload.addEventListener("change", (e) => {
       const file = e.target.files[0];
@@ -61,10 +61,22 @@
           // Clear canvas
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          // Draw user photo
-          ctx.drawImage(photo, 0, 0, canvas.width, canvas.height);
+          // Draw circular clipped photo
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          const radius = 180; // Adjust based on your frame design
 
-          // Draw frame after photo
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(centerX, centerY - 20, radius, 0, Math.PI * 2, true);
+          ctx.closePath();
+          ctx.clip();
+
+          // Draw uploaded photo inside the circle
+          ctx.drawImage(photo, centerX - radius, centerY - radius - 20, radius * 2, radius * 2);
+          ctx.restore();
+
+          // Draw frame on top
           if (frame.complete) {
             ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
           } else {
