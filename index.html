@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gen Z Support Banner Tool</title>
   <style>
     body {
@@ -13,7 +13,7 @@
       padding: 20px;
     }
     h1 { color: #0d3b66; }
-    canvas { 
+    canvas {
       margin-top: 20px;
       border: 2px solid #ddd;
       max-width: 100%;
@@ -34,10 +34,10 @@
   <h1>Gen Z Support Banner Tool</h1>
   <p>Upload your photo and create your support banner!</p>
 
-  <input type="file" id="upload" accept="image/*">
-  <br>
+  <input type="file" id="upload" accept="image/*" />
+  <br />
   <canvas id="bannerCanvas" width="600" height="600"></canvas>
-  <br>
+  <br />
   <button id="downloadBtn">Download Banner</button>
 
   <script>
@@ -46,12 +46,13 @@
     const ctx = canvas.getContext("2d");
 
     const frame = new Image();
-    frame.src = "frame.png"; // 👉 Replace with your banner/frame image (PNG with transparent circle)
+    frame.src = "frame.png"; // Ensure this file is in the same folder as index.html
 
     upload.addEventListener("change", (e) => {
       const file = e.target.files[0];
-      const reader = new FileReader();
+      if (!file) return;
 
+      const reader = new FileReader();
       reader.onload = function(event) {
         const photo = new Image();
         photo.src = event.target.result;
@@ -63,17 +64,19 @@
           // Draw user photo
           ctx.drawImage(photo, 0, 0, canvas.width, canvas.height);
 
-          // Overlay frame
-          frame.onload = () => {
+          // Draw frame after photo
+          if (frame.complete) {
             ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-          };
-          ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+          } else {
+            frame.onload = () => {
+              ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+            };
+          }
         };
       };
       reader.readAsDataURL(file);
     });
 
-    // Download button
     document.getElementById("downloadBtn").addEventListener("click", () => {
       const link = document.createElement("a");
       link.download = "support_banner.png";
